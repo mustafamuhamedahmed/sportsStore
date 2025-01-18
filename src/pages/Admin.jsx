@@ -8,7 +8,8 @@ const Admin = () => {
     price: "",
     category: "",
     description: "",
-    availableQuantity: "", // إضافة حقل الكمية المتاحة
+    availableQuantity: "",
+    image: null, // إضافة حقل الصورة
   });
   const [products, setProducts] = useState([]);
   const [addError, setAddError] = useState(null);
@@ -33,8 +34,8 @@ const Admin = () => {
   }, []);
 
   const validateProduct = () => {
-    const { id, name, price, category, description, availableQuantity } = newProduct;
-    if (!id || !name || !price || !category || !description || !availableQuantity) {
+    const { id, name, price, category, description, availableQuantity, image } = newProduct;
+    if (!id || !name || !price || !category || !description || !availableQuantity || !image) {
       return "All fields are required!";
     }
     if (isNaN(price) || parseFloat(price) <= 0) {
@@ -69,10 +70,15 @@ const Admin = () => {
         category: "",
         description: "",
         availableQuantity: "",
+        image: null, // إعادة تعيين الصورة بعد الإضافة
       });
     } catch (error) {
       setAddError(error.message || "Failed to add product");
     }
+  };
+
+  const handleImageChange = (e) => {
+    setNewProduct({ ...newProduct, image: e.target.files[0] });
   };
 
   return (
@@ -90,7 +96,8 @@ const Admin = () => {
                 <th>Price</th>
                 <th>Category</th>
                 <th>Description</th>
-                <th>Available Quantity</th> {/* إضافة عمود الكمية المتاحة */}
+                <th>Available Quantity</th>
+                <th>Image</th> {/* إضافة عمود للصورة */}
                 <th>Actions</th>
               </tr>
             </thead>
@@ -162,6 +169,13 @@ const Admin = () => {
                   />
                 </td>
                 <td>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange} // التعامل مع تغيير الصورة
+                  />
+                </td>
+                <td>
                   <button type="submit">Add Product</button>
                 </td>
               </tr>
@@ -182,14 +196,15 @@ const Admin = () => {
               <th>Price</th>
               <th>Category</th>
               <th>Description</th>
-              <th>Available Quantity</th> {/* إضافة عمود الكمية المتاحة */}
+              <th>Available Quantity</th>
+              <th>Image</th> {/* إضافة عمود للصورة */}
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {products.length === 0 ? (
               <tr>
-                <td colSpan="7">No products available</td>
+                <td colSpan="8">No products available</td>
               </tr>
             ) : (
               products.map((product, index) => (
@@ -199,7 +214,19 @@ const Admin = () => {
                   <td>${product.price}</td>
                   <td>{product.category}</td>
                   <td>{product.description}</td>
-                  <td>{product.availableQuantity}</td> {/* عرض الكمية المتاحة */}
+                  <td>{product.availableQuantity}</td>
+                  <td>
+                    {product.image ? (
+                      <img
+                        src={URL.createObjectURL(product.image)}
+                        alt={product.name}
+                        width="50"
+                        height="50"
+                      />
+                    ) : (
+                      "No image"
+                    )}
+                  </td>
                   <td>
                     <button>Delete</button>
                   </td>
@@ -212,5 +239,7 @@ const Admin = () => {
     </div>
   );
 };
+
+export default Admin;
 
 export default Admin;
